@@ -363,3 +363,4 @@ MigrationBackup/
 FodyWeavers.xsd
 
 docker-compose.override.yml
+desktop.ini
