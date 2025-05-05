@@ -32,9 +32,11 @@ namespace LION_Docker_Monitor
                 // Тестовые данные для отладки
                 telegramBotToken ??= "{TOKEN}";
                 telegramChatId ??= "{ID}";
+                
                 if (monitoredContainers.Count == 0)
                 {
                     monitoredContainers["{CONTAINER_NAME}"] = new ContainerMonitorConfig { InitialAlertMinutes = 1, RepeatAlertMinutes = 3 };
+
                     Log.Debug("DEBUG MODE: Добавлен тестовый контейнер test_container для мониторинга.");
                 }
 #endif

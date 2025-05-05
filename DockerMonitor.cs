@@ -49,10 +49,10 @@ namespace LION_Docker_Monitor
                         {
                             if (!_containerExitTimes.ContainsKey(containerName) || _containerExitTimes[containerName] == null)
                             {
-                                // Получаем реальное время остановки контейнера через Docker API
                                 var inspect = await _dockerClient.Containers.InspectContainerAsync(container.ID);
                                 DateTime finishedAt = DateTime.Parse(inspect.State.FinishedAt, null, System.Globalization.DateTimeStyles.RoundtripKind);
                                 _containerExitTimes[containerName] = finishedAt;
+
                                 Log.Information("Контейнер '{ContainerName}' остановлен. Время: {Time}", containerName, finishedAt);
                             }
 
@@ -81,10 +81,12 @@ namespace LION_Docker_Monitor
                         else
                         {
                             // Если контейнер снова запущен, сбрасываем таймеры
-                            if (_containerExitTimes.ContainsKey(containerName))
+                            if (_containerExitTimes.ContainsKey(containerName) && _containerExitTimes[containerName] != null)
+                            {
+                                await SendContainerIsRunningNotification(containerName, container.State);
                                 _containerExitTimes[containerName] = null;
-                            if (_lastNotificationTimes.ContainsKey(containerName))
                                 _lastNotificationTimes[containerName] = null;
+                            }
                         }
                     }
                 }
@@ -99,7 +101,13 @@ namespace LION_Docker_Monitor
 
         private async Task SendContainerExitNotification(string containerName, string state, TimeSpan exitedTime)
         {
-            string message = $"⚠️ Контейнер <b>{containerName}</b> находится в состоянии <b>{state}</b> уже {Math.Floor(exitedTime.TotalMinutes)} мин!";
+            string message = $"⚠️ Контейнер '{containerName}' находится в состоянии <b>{state}</b> уже {Math.Floor(exitedTime.TotalMinutes)} мин!";
+            await _notifier.SendMessageAsync(message);
+        }
+
+        private async Task SendContainerIsRunningNotification(string containerName, string state)
+        {
+            string message = $"✅ Контейнер '{containerName}' снова запущен (статус: <b>{state})</b>";
             await _notifier.SendMessageAsync(message);
         }
     }
