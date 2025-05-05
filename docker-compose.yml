@@ -1,0 +1,14 @@
+version: '3.8'
+
+services:
+  docker-monitor:
+    image: yohextraordinary/liondockermonitor:0.1
+    container_name: docker-monitor
+    restart: unless-stopped
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    environment:
+      - TELEGRAM_BOT_TOKEN=TOKEN
+      - TELEGRAM_CHAT_ID=ID
+      # Container 1 monitoring settings
+      - CONTAINER_1=name=name;initial=5;repeat=60

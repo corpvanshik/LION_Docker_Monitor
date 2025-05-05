@@ -1,0 +1,10 @@
+{
+  "profiles": {
+    "LION_Docker_Monitor": {
+      "commandName": "Project"
+    },
+    "Container (Dockerfile)": {
+      "commandName": "Docker"
+    }
+  }
+}
